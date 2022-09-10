@@ -25,7 +25,7 @@ $templateManager = new TemplateManager();
 
 $message = $templateManager->getTemplateComputed(
     $template,
-    new Quote($faker->randomNumber(), $faker->randomNumber(), $faker->randomNumber(), $faker->date())
+    ['quote' => new Quote($faker->randomNumber(), $faker->randomNumber(), $faker->randomNumber(), $faker->date())]
 );
 
 echo $message->subject."\n".$message->content;
