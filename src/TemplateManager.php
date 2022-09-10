@@ -11,11 +11,17 @@ use App\Repository\SiteRepository;
 
 class TemplateManager
 {
-    public function getTemplateComputed(Template $tpl, Quote $quote): Template
+    public function getTemplateComputed(Template $tpl, array $data)
     {
         $replaced = clone($tpl);
-        $replaced->subject = $this->computeText($replaced->subject, $quote);
-        $replaced->content = $this->computeText($replaced->content, $quote);
+        $quote = (isset($data['quote']) && $data['quote'] instanceof Quote) ? $data['quote'] : null;
+        if (!$quote instanceof Quote) {
+            return $replaced;
+        }
+        $user = (isset($data['user']) && $data['user'] instanceof User) ? $data['user'] : null;
+
+        $replaced->setSubject($this->computeText($replaced->getSubject(), $quote, $user));
+        $replaced->setContent($this->computeText($replaced->getContent(), $quote, $user));
 
         return $replaced;
     }
@@ -25,7 +31,7 @@ class TemplateManager
         return $this->computeQuote($quote, $text, $user);
     }
 
-    public function computeQuote(Quote $quote, string $text, ?User $user): string
+    private function computeQuote(Quote $quote, string $text, ?User $user): string
     {
         $text = $this->computeSummaryHTML($text, $quote);
         $text = $this->computeSummary($text, $quote);
@@ -49,21 +55,23 @@ class TemplateManager
         }
         $user = $this->getCurrentUser($user);
 
-        return str_replace('[user:first_name]', ucfirst(mb_strtolower($user->firstname)), $text);
+        return str_replace('[user:first_name]', ucfirst(mb_strtolower($user->getFirstname())), $text);
     }
 
     private function computeDestination(string $text, Quote $quote): string
     {
         $containDestination = false !== strpos($text, '[quote:destination_name]');
-        if (!$containDestination) {
+        $containDestinationLink = false !== strpos($text, '[quote:destination_link]');
+        if (!$containDestination && !$containDestinationLink) {
             return $text;
         }
 
         $destination = DestinationRepository::getInstance()->getById($quote->getDestinationId());
-        $site = SiteRepository::getInstance()->getById($quote->getSiteId());
-        $text = str_replace('[quote:destination_name]', $destination->countryName, $text);
+        $text = str_replace('[quote:destination_name]', $destination->getCountryName(), $text);
 
-        return str_replace('[quote:destination_link]', $site->getUrl().'/'.$destination->getCountryName().'/quote/'.$quote->id, $text);
+        $site = SiteRepository::getInstance()->getById($quote->getSiteId());
+
+        return str_replace('[quote:destination_link]', $site->getUrl().'/'.$destination->getCountryName().'/quote/'.$quote->getId(), $text);
     }
 
     private function computeSummaryHTML(string $text, Quote $quote): string
@@ -75,7 +83,7 @@ class TemplateManager
 
         return str_replace(
             '[quote:summary_html]',
-            Quote::renderText($quote),
+            Quote::renderHtml($quote),
             $text
         );
 

@@ -4,8 +4,8 @@ namespace App\Entity;
 
 class Site
 {
-    public int $id;
-    public string $url;
+    private int $id;
+    private string $url;
 
     public function getId(): int
     {

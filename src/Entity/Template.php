@@ -3,9 +3,9 @@ namespace App\Entity;
 
 class Template
 {
-    public int $id;
-    public string $subject;
-    public string $content;
+    private int $id;
+    private string $subject;
+    private string $content;
 
     public function __construct($id, $subject, $content)
     {

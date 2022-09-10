@@ -3,10 +3,10 @@ namespace App\Entity;
 
 class User
 {
-    public int $id;
-    public string $firstname;
-    public string $lastname;
-    public string $email;
+    private int $id;
+    private string $firstname;
+    private string $lastname;
+    private string $email;
 
     public function __construct($id, $firstname, $lastname, $email)
     {

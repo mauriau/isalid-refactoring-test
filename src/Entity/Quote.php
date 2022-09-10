@@ -3,10 +3,10 @@ namespace App\Quote;
 
 class Quote
 {
-    public int $id;
-    public int $siteId;
-    public int $destinationId;
-    public \DateTimeInterface $dateQuoted;
+    private int $id;
+    private int $siteId;
+    private int $destinationId;
+    private \DateTimeInterface $dateQuoted;
 
     public function getId(): int
     {
@@ -59,11 +59,11 @@ class Quote
 
     public static function renderHtml(Quote $quote): string
     {
-        return '<p>' . $quote->id . '</p>';
+        return '<p>' . $quote->getId() . '</p>';
     }
 
     public static function renderText(Quote $quote): string
     {
-        return (string) $quote->id;
+        return (string) $quote->getId();
     }
 }

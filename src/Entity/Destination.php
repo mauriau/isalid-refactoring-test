@@ -3,11 +3,11 @@ namespace App\Entity;
 
 class Destination
 {
-    public int $id;
-    public string $countryName;
-    public string $conjunction;
-    public string $name;
-    public string $computerName;
+    private int $id;
+    private string $countryName;
+    private string $conjunction;
+    private string $name;
+    private string $computerName;
 
     public function __construct()
     {
