@@ -1,6 +1,6 @@
 {
     "require": {
-        "php": "^5.5.9|^7.0",
+        "php": ">= 7.4",
 
         "fzaninotto/faker": "v1.6.0"
     },
