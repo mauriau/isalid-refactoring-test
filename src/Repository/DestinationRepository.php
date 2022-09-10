@@ -10,16 +10,22 @@ class DestinationRepository implements Repository
 {
     use SingletonTrait;
 
-    public function getById(int $id): Destination
+    /**
+     * @param int $id
+     *
+     * @return Destination
+     */
+    public function getById($id)
     {
         // DO NOT MODIFY THIS METHOD
-        $generator = \Faker\Factory::create();
+        $generator    = \Faker\Factory::create();
         $generator->seed($id);
 
-        return (new Destination())
-            ->setId($id)
-            ->setCountryName($generator->country)
-            ->setName('en')
-            ->setComputerName($generator->slug());
+        return new Destination(
+            $id,
+            $generator->country,
+            'en',
+            $generator->slug()
+        );
     }
 }

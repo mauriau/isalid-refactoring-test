@@ -1,10 +1,10 @@
 <?php
 
 use App\Entity\Template;
-use App\Quote\Quote;
+use App\Entity\Quote;
 use App\TemplateManager;
 
-require __DIR__.'../vendor/autoload.php';
+require __DIR__.'/../vendor/autoload.php';
 
 $faker = \Faker\Factory::create();
 
@@ -25,7 +25,7 @@ $templateManager = new TemplateManager();
 
 $message = $templateManager->getTemplateComputed(
     $template,
-    ['quote' => new Quote($faker->randomNumber(), $faker->randomNumber(), $faker->randomNumber(), $faker->date())]
+    ['quote' => new Quote($faker->randomNumber(), $faker->randomNumber(), $faker->randomNumber(), new \DateTime($faker->date()))]
 );
 
-echo $message->subject."\n".$message->content;
+echo $message->getSubject()."\n".$message->getContent();

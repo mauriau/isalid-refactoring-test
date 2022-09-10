@@ -5,7 +5,7 @@ namespace App;
 use App\Context\ApplicationContext;
 use App\Entity\Template;
 use App\Entity\User;
-use App\Quote\Quote;
+use App\Entity\Quote;
 use App\Repository\DestinationRepository;
 use App\Repository\SiteRepository;
 
@@ -47,7 +47,7 @@ class TemplateManager
         return $user instanceof User ? $user : $context->getCurrentUser();
     }
 
-    private function computeUser(string $text, User $user): string
+    private function computeUser(string $text, ?User $user): string
     {
         $containFirstname = false !== strpos($text, '[user:first_name]');
         if (!$containFirstname) {

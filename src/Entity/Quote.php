@@ -1,5 +1,6 @@
 <?php
-namespace App\Quote;
+
+namespace App\Entity;
 
 class Quote
 {
@@ -7,6 +8,14 @@ class Quote
     private int $siteId;
     private int $destinationId;
     private \DateTimeInterface $dateQuoted;
+
+    public function __construct(int $id, int $siteId, int $destinationId, \DateTimeInterface $dateQuoted)
+    {
+        $this->id = $id;
+        $this->siteId = $siteId;
+        $this->destinationId = $destinationId;
+        $this->dateQuoted = $dateQuoted;
+    }
 
     public function getId(): int
     {
@@ -59,11 +68,11 @@ class Quote
 
     public static function renderHtml(Quote $quote): string
     {
-        return '<p>' . $quote->getId() . '</p>';
+        return '<p>'.$quote->getId().'</p>';
     }
 
     public static function renderText(Quote $quote): string
     {
-        return (string) $quote->getId();
+        return (string)$quote->getId();
     }
 }
