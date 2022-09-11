@@ -20,10 +20,10 @@ Bien cordialement,
 
 L'équipe de Shipper
 ");
-$userReplacer = new \App\Processor\UserReplacer();
-$destinationReplacer = new \App\Processor\DestinationReplacer();
-$summaryReplacer = new \App\Processor\SummaryReplacer();
-$summaryHTMLReplacer = new \App\Processor\SummaryHTMLReplacer();
+$userReplacer = new \App\Replacer\UserReplacer();
+$destinationReplacer = new \App\Replacer\DestinationReplacer();
+$summaryReplacer = new \App\Replacer\SummaryReplacer();
+$summaryHTMLReplacer = new \App\Replacer\SummaryHTMLReplacer();
 $templateManager = new TemplateManager($userReplacer, $destinationReplacer, $summaryReplacer, $summaryHTMLReplacer);
 
 $message = $templateManager->getTemplateComputed(

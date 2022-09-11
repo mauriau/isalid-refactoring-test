@@ -5,10 +5,10 @@ namespace App;
 use App\Entity\Template;
 use App\Entity\User;
 use App\Entity\Quote;
-use App\Processor\DestinationReplacer;
-use App\Processor\SummaryHTMLReplacer;
-use App\Processor\SummaryReplacer;
-use App\Processor\UserReplacer;
+use App\Replacer\DestinationReplacer;
+use App\Replacer\SummaryHTMLReplacer;
+use App\Replacer\SummaryReplacer;
+use App\Replacer\UserReplacer;
 
 class TemplateManager
 {
@@ -51,7 +51,6 @@ class TemplateManager
     private function processSubject(Template $template): void
     {
         $subject = $template->getSubject();
-
         $subject = $this->summaryHTMLReplacer->replace($subject, $this->quote);
         $subject = $this->summaryReplacer->replace($subject, $this->quote);
         $subject = $this->destinationReplacer->replace($subject, $this->quote);
