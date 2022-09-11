@@ -20,7 +20,11 @@ Bien cordialement,
 
 L'équipe de Shipper
 ");
-$templateManager = new TemplateManager();
+$userReplacer = new \App\Processor\UserReplacer();
+$destinationReplacer = new \App\Processor\DestinationReplacer();
+$summaryReplacer = new \App\Processor\SummaryReplacer();
+$summaryHTMLReplacer = new \App\Processor\SummaryHTMLReplacer();
+$templateManager = new TemplateManager($userReplacer, $destinationReplacer, $summaryReplacer, $summaryHTMLReplacer);
 
 $message = $templateManager->getTemplateComputed(
     $template,

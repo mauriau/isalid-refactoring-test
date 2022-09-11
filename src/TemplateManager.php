@@ -2,17 +2,34 @@
 
 namespace App;
 
-use App\Context\ApplicationContext;
 use App\Entity\Template;
 use App\Entity\User;
 use App\Entity\Quote;
-use App\Repository\DestinationRepository;
-use App\Repository\SiteRepository;
+use App\Processor\DestinationReplacer;
+use App\Processor\SummaryHTMLReplacer;
+use App\Processor\SummaryReplacer;
+use App\Processor\UserReplacer;
 
 class TemplateManager
 {
     private $quote;
     private $user;
+    private UserReplacer $userProcessor;
+    private DestinationReplacer $destinationReplacer;
+    private SummaryReplacer $summaryReplacer;
+    private SummaryHTMLReplacer $summaryHTMLReplacer;
+
+    public function __construct(
+        UserReplacer $userProcessor,
+        DestinationReplacer $destinationReplacer,
+        SummaryReplacer $summaryReplacer,
+        SummaryHTMLReplacer $summaryHTMLReplacer
+    ) {
+        $this->userProcessor = $userProcessor;
+        $this->destinationReplacer = $destinationReplacer;
+        $this->summaryReplacer = $summaryReplacer;
+        $this->summaryHTMLReplacer = $summaryHTMLReplacer;
+    }
 
     public function getTemplateComputed(Template $tpl, array $data)
     {
@@ -25,98 +42,32 @@ class TemplateManager
         $this->quote = $quote;
         $this->user = $user;
 
-        $this->computeSubject($clonedTemplate);
-        $this->computeContent($clonedTemplate);
+        $this->processSubject($clonedTemplate);
+        $this->processContent($clonedTemplate);
 
         return $clonedTemplate;
     }
 
-    private function computeSubject(Template $template): void
+    private function processSubject(Template $template): void
     {
         $subject = $template->getSubject();
-        $subject = $this->computeSummaryHTML($subject);
-        $subject = $this->computeSummary($subject);
-        $subject = $this->computeDestination($subject);
-        $subject = $this->computeUser($subject);
+
+        $subject = $this->summaryHTMLReplacer->replace($subject, $this->quote);
+        $subject = $this->summaryReplacer->replace($subject, $this->quote);
+        $subject = $this->destinationReplacer->replace($subject, $this->quote);
+        $subject = $this->userProcessor->replace($subject, $this->user);
 
         $template->setSubject($subject);
     }
 
-    private function computeContent(Template $template): void
+    private function processContent(Template $template): void
     {
         $content = $template->getContent();
-        $content = $this->computeSummaryHTML($content);
-        $content = $this->computeSummary($content);
-        $content = $this->computeDestination($content);
-        $content = $this->computeUser($content);
+        $content = $this->summaryHTMLReplacer->replace($content, $this->quote);
+        $content = $this->summaryReplacer->replace($content, $this->quote);
+        $content = $this->destinationReplacer->replace($content, $this->quote);
+        $content = $this->userProcessor->replace($content, $this->user);
 
         $template->setContent($content);
-    }
-
-    private function getCurrentUser(): User
-    {
-        $context = ApplicationContext::getInstance();
-
-        return $this->user instanceof User ? $this->user : $context->getCurrentUser();
-    }
-
-    private function computeUser(string $text): string
-    {
-        $containFirstname = false !== strpos($text, '[user:first_name]');
-        if (!$containFirstname) {
-            return $text;
-        }
-        $user = $this->getCurrentUser();
-
-        return str_replace('[user:first_name]', $user->getFirstname(), $text);
-    }
-
-    private function computeDestination(string $text): string
-    {
-        $containDestination = false !== strpos($text, '[quote:destination_name]');
-        $containDestinationLink = false !== strpos($text, '[quote:destination_link]');
-        if (!$containDestination && !$containDestinationLink) {
-            return $text;
-        }
-
-        $destination = DestinationRepository::getInstance()->getById($this->quote->getDestinationId());
-        if ($containDestination) {
-            $text = str_replace('[quote:destination_name]', $destination->getCountryName(), $text);
-        }
-
-        if ($containDestinationLink) {
-            $site = SiteRepository::getInstance()->getById($this->quote->getSiteId());
-            $text = str_replace('[quote:destination_link]', $site->getUrl().'/'.$destination->getCountryName().'/quote/'.$this->quote->getId(), $text);
-        }
-
-        return $text;
-    }
-
-    private function computeSummaryHTML(string $text): string
-    {
-        $containsSummaryHtml = false !== strpos($text, '[quote:summary_html]');
-        if (!$containsSummaryHtml) {
-            return $text;
-        }
-
-        return str_replace(
-            '[quote:summary_html]',
-            Quote::renderHtml($this->quote),
-            $text
-        );
-    }
-
-    private function computeSummary(string $text): string
-    {
-        $containsSummary = false !== strpos($text, '[quote:summary]');
-        if (!$containsSummary) {
-            return $text;
-        }
-
-        return str_replace(
-            '[quote:summary]',
-            Quote::renderText($this->quote),
-            $text
-        );
     }
 }
