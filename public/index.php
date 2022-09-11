@@ -19,8 +19,7 @@ Merci de nous avoir contacté pour votre livraison à [quote:destination_name].
 Bien cordialement,
 
 L'équipe de Shipper
-"
-);
+");
 $templateManager = new TemplateManager();
 
 $message = $templateManager->getTemplateComputed(
@@ -28,4 +27,4 @@ $message = $templateManager->getTemplateComputed(
     ['quote' => new Quote($faker->randomNumber(), $faker->randomNumber(), $faker->randomNumber(), new \DateTime($faker->date()))]
 );
 
-echo $message->getSubject()."\n".$message->getContent();
+echo $message->getSubject().PHP_EOL.$message->getContent();

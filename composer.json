@@ -13,6 +13,7 @@
         "fzaninotto/faker": "v1.6.0"
     },
     "require-dev": {
-        "phpspec/phpspec": "^7.2"
+        "phpspec/phpspec": "^7.2",
+        "symfony/var-dumper": "^5.4"
     }
 }
